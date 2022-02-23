@@ -1,11 +1,12 @@
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
+const cors = require('cors')
 const connection = require('./database/database');
-const Tarefas =  require('./database/tarefas');
+const Produtos =  require('./database/tarefas');
 
 app.use(express.json());
-
+app.use(cors());
 //testando a conexão
 connection.authenticate().then(()=>{
     console.log("connected..");
@@ -18,23 +19,23 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
 //listando todas as tarefas
-app.get('/tarefas', (req, res) => {
+app.get('/produtos', (req, res) => {
     
-    Tarefas.findAll({raw: true}).then(tarefas => {   
+    Produtos.findAll({raw: true}).then(tarefas => {   
         res.statusCode = 200;
         return res.json(tarefas);             
     });
 });
 
 //listando uma tarefa pelo id
-app.get("/tarefa/:id", (req, res) => {
+app.get("/produto/:id", (req, res) => {
 
     if(isNaN(req.params.id)){
         res.sendStatus(400);
     }else{
         var id = parseInt(req.params.id);
 
-        Tarefas.findOne({where: {id: id}}).then(tarefas => {
+        Produtos.findOne({where: {id: id}}).then(tarefas => {
 
             if(tarefas != undefined){
                 res.statusCode = 200;
@@ -47,66 +48,25 @@ app.get("/tarefa/:id", (req, res) => {
 });
 
 //Criando uma noca tarefa
-app.post('/tarefa', (req,res) => {
-    var {nome,conteudo,autor} = req.body;
+app.post('/produto', (req,res) => {
+    var {nome,price,quantidade,descri,img} = req.body;
 
-    Tarefas.create({
+    Produtos.create({
+
         nome: nome,
-        conteudo: conteudo,
-        autor: autor
-    }).then(() => {res.sendStatus(200);});
+        price: price,
+        quantidade: quantidade,
+        descri: descri,
+        img: img
+
+    }).then(() => {res.json(200);});
     
 });
 
 //Delete uma tarefa
-app.delete('/tarefa/:id', (req, res) =>{
 
-    if(isNaN(req.params.id)){
-        res.sendStatus(400);
-    }else{
 
-        var id = parseInt(req.params.id);
-        Tarefas.findOne({where: {id: id}}).then(tarefas => {
 
-            if(tarefas != undefined){
-
-                res.sendStatus(200);
-                Tarefas.destroy({ where: { id: id }});
-                
-            }else{
-                res.sendStatus(400);
-            }
-        });
-    }
-});
-
-app.put('/tarefa/:id', (req, res) =>{
-
-    if(isNaN(req.params.id)){
-        res.sendStatus(400);
-    }else{
-        
-        var id = parseInt(req.params.id);
-        var {nome,conteudo,autor} = req.body;
-
-        Tarefas.findOne({where: {id: id}}).then(tarefas => {
-
-            if(tarefas != undefined) {
-
-                tarefas.update({
-                    nome: nome,
-                    conteudo: conteudo,
-                    autor: autor
-                    }).then(() => {
-                        res.sendStatus(200);
-                    });
-
-            }else{
-                res.sendStatus(400); 
-            }
-        });    
-    }
-});
 
 app.listen(8181);
 

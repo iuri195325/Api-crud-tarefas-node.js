@@ -1,24 +1,33 @@
 const Sequelize = require('sequelize');
 const connection = require('./database');
 
-const Tarefas = connection.define('Tarefas',{
+const Produtos = connection.define('Produtos',{
 
     nome:{
         type: Sequelize.STRING,
         allowNull: false
     },
-    conteudo:{
-        type: Sequelize.TEXT,
+    price:{
+        type: Sequelize.INTEGER,
         allowNull: false
     },
-    autor:{
+    descri:{
+        type: Sequelize.STRING,
+        allowNull: false
+    },
+    quantidade:{
+        type: Sequelize.STRING,
+        allowNull: false
+    },
+    img:{
         type: Sequelize.STRING,
         allowNull: false
     }
+    
 
 });
 
 
-module.exports = Tarefas;
+module.exports = Produtos;
 
-Tarefas.sync({force: false})
+//Produtos.sync({force: false})
